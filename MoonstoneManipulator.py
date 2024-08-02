@@ -178,7 +178,6 @@ def first_time_prompt():
             return
         else:
             with open("password.txt", "w") as passwordFile:
-                print('saving pass')
                 passwordFile.write(password)
                 first_time_window.destroy()
                 create_main_window()
