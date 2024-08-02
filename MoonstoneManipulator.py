@@ -141,13 +141,12 @@ def encrypt_decrypt(mode, input_file, output_file):
 def first_time_prompt():
     first_time_window = tk.Tk()
     first_time_window.title("Welcome to Moonstone Manipulator")
-    first_time_window.geometry("400x300+200+200")  # Adjust size as needed
+    first_time_window.geometry("450x300+200+200")  # Adjust size as needed
 
     # Large title
     title_label = tk.Label(first_time_window, text="Moonstone Manipulator", font=("Arial", 16, "bold"), fg="blue")
     title_label.pack()
 
-    # Author and version
     author_label = tk.Label(first_time_window, text="Author: SassyCultist  Team: MiMLoader")
     author_label.pack()
 
@@ -158,20 +157,30 @@ def first_time_prompt():
     warning_label = tk.Label(first_time_window, text="Disclaimer: You can ruin your save with this tool. Proceed at your own risk.")
     warning_label.pack()
 
+    # Password Hint
+    hint_label = tk.Label(first_time_window, text="Save file password is located in package.nw\scripts\c3runtime.js near 'NWJS Enc'")
+    hint_label.pack()
+
     password_label = tk.Label(first_time_window, text="Save file password:")
     password_label.pack()
-    password_entry = tk.Entry(first_time_window, show="*")
+    password_entry = tk.Entry(first_time_window)
     password_entry.pack()
     password_clear = tk.Button(first_time_window, text="Clear", command=lambda: clear_entry(password_entry))
     password_clear.pack()
 
     def save_password():
         password = password_entry.get()
-        with open("password.txt", "w") as passwordFile:
-            print('saving pass')
-            passwordFile.write(password)
-            first_time_window.destroy()
-            create_main_window()
+        correct_hash = "a1feb661ae01073f17f5b12f16ed2082deca0ff4bdc761906bf431101917332f"
+        input_hash = hashlib.sha256(password.encode()).hexdigest()
+        if input_hash != correct_hash:
+            messagebox.showerror("Error", "Incorrect save file password.")
+            return
+        else:
+            with open("password.txt", "w") as passwordFile:
+                print('saving pass')
+                passwordFile.write(password)
+                first_time_window.destroy()
+                create_main_window()
 
 
     save_button = tk.Button(first_time_window, text="Save", command=save_password)
