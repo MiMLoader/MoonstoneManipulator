@@ -71,9 +71,11 @@ def decrypt_array_buffer(data, password, output_file):
     decryptor = cipher.decryptor()
     plaintext = decryptor.update(ciphertext) + decryptor.finalize()
 
-    # Save the decrypted data to a file
-    with open(output_file, 'wb') as f:
-        f.write(plaintext)
+    try:
+        with open(output_file, 'wb') as f:
+            f.write(plaintext)
+    except OSError as e:
+        raise OSError(f"Error writing to output file: {e}")
 
 def encrypt_array_buffer(data, password, output_file):
     """Encrypts an array buffer using AES-GCM and saves the output to a file.
@@ -109,17 +111,16 @@ def encrypt_array_buffer(data, password, output_file):
     output[33+len(ciphertext):] = tag
 
     # Save the encrypted data to a file
-    with open(output_file, 'wb') as f:
-        f.write(output)
+    try:
+        with open(output_file, 'wb') as f:
+            f.write(output)
+    except OSError as e:
+        raise OSError(f"Error writing to output file: {e}")
 
 def encrypt_decrypt(mode, input_file, output_file):
     if mode not in ["encrypt", "decrypt"]:
         messagebox.showerror("Error", "Invalid mode selected")
         return
-    print("processing")
-    print(mode)
-    print(input_file)
-    print(output_file)
 
     try:
         with open("password.txt", "r") as passwordFile:
@@ -158,7 +159,7 @@ def first_time_prompt():
     warning_label.pack()
 
     # Password Hint
-    hint_label = tk.Label(first_time_window, text="Save file password is located in package.nw\scripts\c3runtime.js near 'NWJS Enc'")
+    hint_label = tk.Label(first_time_window, text="Save file password is located in package.nw\\scripts\\c3runtime.js near NWJS Enc")
     hint_label.pack()
 
     password_label = tk.Label(first_time_window, text="Save file password:")
