@@ -113,9 +113,9 @@ def encrypt_array_buffer(data, password, output_file):
         f.write(output)
 
 def encrypt_decrypt(mode, input_file, output_file):
-    mode = mode_var.get()
-    input_file = input_file_entry.get()
-    output_file = output_file_entry.get()
+    if mode not in ["encrypt", "decrypt"]:
+        messagebox.showerror("Error", "Invalid mode selected")
+        return
     print("processing")
     print(mode)
     print(input_file)
@@ -128,9 +128,9 @@ def encrypt_decrypt(mode, input_file, output_file):
             data = dataFile.read()
 
         if mode == "encrypt":
-            encrypt_array_buffer(dataFile, password, output_file)
+            encrypt_array_buffer(data, password, output_file)
         elif mode == "decrypt":
-            decrypt_array_buffer(dataFile, password, output_file)
+            decrypt_array_buffer(data, password, output_file)
         else:
             raise ValueError("Invalid mode")
 
@@ -138,37 +138,54 @@ def encrypt_decrypt(mode, input_file, output_file):
     except Exception as e:
         messagebox.showerror("Error", f"{mode.capitalize()}ion failed: {e}")
 
-def password_prompt():
-    password_window = tk.Toplevel()
-    password_window.title("Moonstone Manipulator Password Entry")
-    password_window.geometry("200x200+100+100")
-    password_window.title("Enter save file password")
+def first_time_prompt():
+    first_time_window = tk.Tk()
+    first_time_window.title("Welcome to Moonstone Manipulator")
+    first_time_window.geometry("400x300+200+200")  # Adjust size as needed
 
-    password_label = tk.Label(password_window, text="Password:")
+    # Large title
+    title_label = tk.Label(first_time_window, text="Moonstone Manipulator", font=("Arial", 16, "bold"), fg="blue")
+    title_label.pack()
+
+    # Author and version
+    author_label = tk.Label(first_time_window, text="Author: SassyCultist  Team: MiMLoader")
+    author_label.pack()
+
+    version_label = tk.Label(first_time_window, text="Version 0.1")
+    version_label.pack()
+
+    # Warning
+    warning_label = tk.Label(first_time_window, text="Disclaimer: You can ruin your save with this tool. Proceed at your own risk.")
+    warning_label.pack()
+
+    password_label = tk.Label(first_time_window, text="Save file password:")
     password_label.pack()
-    password_entry = tk.Entry(password_window, show="*")
+    password_entry = tk.Entry(first_time_window, show="*")
     password_entry.pack()
+    password_clear = tk.Button(first_time_window, text="Clear", command=lambda: clear_entry(password_entry))
+    password_clear.pack()
 
     def save_password():
         password = password_entry.get()
-        # Hash the password for storage
-        #hashed_password = hashlib.sha256(password.encode()).hexdigest()
-        with open("password.txt", "w") as f:
-            f.write(password)
-            password_window.destroy()
+        with open("password.txt", "w") as passwordFile:
+            print('saving pass')
+            passwordFile.write(password)
+            first_time_window.destroy()
+            create_main_window()
 
 
-    save_button = tk.Button(password_window, text="Save", command=save_password)
+    save_button = tk.Button(first_time_window, text="Save", command=save_password)
     save_button.pack()
+    first_time_window.mainloop()
+
+def clear_entry(entry):
+    entry.delete(0,tk.END)
 
 def create_main_window():
 # Create the main window
     root = tk.Tk()
     root.title("Moonstone Manipulator")
     root.geometry("400x300+300+200")
-
-    if not os.path.exists("password.txt"):
-        password_prompt()
 
     # Mode selection
     mode_var = tk.StringVar(value="encrypt")
@@ -192,6 +209,8 @@ def create_main_window():
     input_file_label.pack()
     input_file_entry = tk.Entry(root)
     input_file_entry.pack()
+    input_file_clear = tk.Button(root, text="Clear", command=lambda: clear_entry(input_file_entry))
+    input_file_clear.pack()
     input_file_button = tk.Button(root, text="Browse", command=select_input_file)
     input_file_button.pack()
 
@@ -202,11 +221,16 @@ def create_main_window():
     output_file_entry.pack()
     output_file_button = tk.Button(root, text="Browse", command=select_output_file)
     output_file_button.pack()
+    output_file_clear = tk.Button(root, text="Clear", command=lambda: clear_entry(output_file_entry))
+    output_file_clear.pack()
 
 
     # Start button
-    start_button = tk.Button(root, text="Start", command=encrypt_decrypt(mode_var, input_file_entry, output_file_entry))
+    start_button = tk.Button(root, text="Start", command= lambda: encrypt_decrypt(mode_var.get(), input_file_entry.get(), output_file_entry.get()))
     start_button.pack()
     root.mainloop()
 
-create_main_window()
+if not os.path.exists("password.txt"):
+    first_time_prompt()
+else:
+    create_main_window()
