@@ -116,15 +116,21 @@ def encrypt_array_buffer(data, password, output_file):
             f.write(output)
     except OSError as e:
         raise OSError(f"Error writing to output file: {e}")
-
+def check_password(password):
+    correct_hash = "a1feb661ae01073f17f5b12f16ed2082deca0ff4bdc761906bf431101917332f"
+    input_hash = hashlib.sha256(password.encode()).hexdigest()
+    if input_hash != correct_hash:
+        raise ValueError("Incorrect save file password.")
+        return
+    return
 def encrypt_decrypt(mode, input_file, output_file):
     if mode not in ["encrypt", "decrypt"]:
         messagebox.showerror("Error", "Invalid mode selected")
         return
-
     try:
         with open("password.txt", "r") as passwordFile:
             password = passwordFile.read().strip()
+            check_password(password)
         with open(input_file, 'rb') as dataFile:
             data = dataFile.read()
 
@@ -171,16 +177,11 @@ def first_time_prompt():
 
     def save_password():
         password = password_entry.get()
-        correct_hash = "a1feb661ae01073f17f5b12f16ed2082deca0ff4bdc761906bf431101917332f"
-        input_hash = hashlib.sha256(password.encode()).hexdigest()
-        if input_hash != correct_hash:
-            messagebox.showerror("Error", "Incorrect save file password.")
-            return
-        else:
-            with open("password.txt", "w") as passwordFile:
-                passwordFile.write(password)
-                first_time_window.destroy()
-                create_main_window()
+        check_password(password)
+        with open("password.txt", "w") as passwordFile:
+            passwordFile.write(password)
+            first_time_window.destroy()
+            create_main_window()
 
 
     save_button = tk.Button(first_time_window, text="Save", command=save_password)
@@ -216,7 +217,7 @@ def create_main_window():
     # Input file selection
     input_file_label = tk.Label(root, text="Input file:")
     input_file_label.pack()
-    input_file_entry = tk.Entry(root)
+    input_file_entry = tk.Entry(root, width=50)
     input_file_entry.pack()
     input_file_clear = tk.Button(root, text="Clear", command=lambda: clear_entry(input_file_entry))
     input_file_clear.pack()
@@ -226,7 +227,7 @@ def create_main_window():
     # Output file selection
     output_file_label = tk.Label(root, text="Output file:")
     output_file_label.pack()
-    output_file_entry = tk.Entry(root)
+    output_file_entry = tk.Entry(root, width=50)
     output_file_entry.pack()
     output_file_button = tk.Button(root, text="Browse", command=select_output_file)
     output_file_button.pack()
