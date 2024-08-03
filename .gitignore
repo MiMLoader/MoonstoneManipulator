@@ -1,2 +1,4 @@
 password.txt
 passstore.txt
+build/*
+dist/*
