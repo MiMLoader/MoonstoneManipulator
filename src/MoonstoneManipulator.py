@@ -178,8 +178,9 @@ def first_time_prompt():
     def save_password():
         password = password_entry.get()
         check_password(password)
-        with open("password.txt", "w") as passwordFile:
+        with open("password.txt", "a") as passwordFile:
             passwordFile.write(password)
+            passwordFile.flush()
             first_time_window.destroy()
             create_main_window()
 
