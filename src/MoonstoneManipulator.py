@@ -1,5 +1,6 @@
 import hashlib
 import os
+import shutil
 import tkinter as tk
 from tkinter import filedialog
 from tkinter import messagebox
@@ -116,6 +117,7 @@ def encrypt_array_buffer(data, password, output_file):
             f.write(output)
     except OSError as e:
         raise OSError(f"Error writing to output file: {e}")
+    
 def check_password(password):
     correct_hash = "a1feb661ae01073f17f5b12f16ed2082deca0ff4bdc761906bf431101917332f"
     input_hash = hashlib.sha256(password.encode()).hexdigest()
@@ -123,6 +125,32 @@ def check_password(password):
         raise ValueError("Incorrect save file password.")
         return
     return
+
+def copy_file(src, dst, backup_folder):
+    """Copies a file to a destination, creating a numbered backup in a specified folder.
+
+    Args:
+      src (str): Path to the source file.
+      dst (str): Path to the destination file.
+      backup_folder (str): Path to the backup folder.
+    """
+    try:
+      # Create the backup folder if it doesn't exist
+      os.makedirs(backup_folder, exist_ok=True)
+
+      # Generate backup file path with incremental number
+      base_name, ext = os.path.splitext(os.path.basename(src))
+      backup_number = 1
+      backup_file = os.path.join(backup_folder, f"{base_name}_{backup_number}{ext}")
+      while os.path.exists(backup_file):
+          backup_number += 1
+          backup_file = os.path.join(backup_folder, f"{base_name}_{backup_number}{ext}")
+
+      shutil.copy2(src, backup_file)
+    except OSError as e:
+      raise OSError(f"Error copying file: {e}")
+
+
 def encrypt_decrypt(mode, input_file, output_file):
     if mode not in ["encrypt", "decrypt"]:
         messagebox.showerror("Error", "Invalid mode selected")
@@ -133,6 +161,7 @@ def encrypt_decrypt(mode, input_file, output_file):
             check_password(password)
         with open(input_file, 'rb') as dataFile:
             data = dataFile.read()
+        copy_file(input_file, input_file + ".bak", "Backups")
 
         if mode == "encrypt":
             encrypt_array_buffer(data, password, output_file)
