@@ -11,6 +11,8 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
 
+backup_folder = "Backups"
+
 def get_password_key(password):
     """Converts a password to a raw key suitable for PBKDF2.
 
@@ -161,7 +163,7 @@ def encrypt_decrypt(mode, input_file, output_file):
             check_password(password)
         with open(input_file, 'rb') as dataFile:
             data = dataFile.read()
-        copy_file(input_file, input_file + ".bak", "Backups")
+        copy_file(input_file, input_file + ".bak", backup_folder)
 
         if mode == "encrypt":
             encrypt_array_buffer(data, password, output_file)
@@ -221,6 +223,35 @@ def first_time_prompt():
 def clear_entry(entry):
     entry.delete(0,tk.END)
 
+def delete_folder(folder):
+    if not os.path.exists(folder):
+        return 0
+    files_deleted = 0
+    for file in os.listdir(folder):
+        file_path = os.path.join(folder, file)
+        try:
+            if os.path.isfile(file_path):
+                os.remove(file_path)
+                files_deleted += 1
+        except OSError as e:
+            print(f"Error deleting file: {file_path}. Reason: {e}")
+    return files_deleted
+
+def confirm_delete_backups():
+    """Prompts the user to confirm deletion of backups.
+
+    Args:
+        backup_folder (str): Path to the backup folder.
+    """
+
+    confirmation = messagebox.askyesno("Confirm", f"Are you sure you want to delete all backups in {backup_folder}?")
+    if confirmation:
+        try:
+            num_deleted = delete_folder(backup_folder)
+            messagebox.showinfo("Success", f"{num_deleted} files deleted successfully.")
+        except OSError as e:
+            messagebox.showerror("Error", f"Error deleting backups: {e}")
+
 def create_main_window():
 # Create the main window
     root = tk.Tk()
@@ -264,10 +295,14 @@ def create_main_window():
     output_file_clear = tk.Button(root, text="Clear", command=lambda: clear_entry(output_file_entry))
     output_file_clear.pack()
 
-
     # Start button
     start_button = tk.Button(root, text="Start", command= lambda: encrypt_decrypt(mode_var.get(), input_file_entry.get(), output_file_entry.get()))
     start_button.pack()
+
+    # Delete backups button
+    delete_backups_button = tk.Button(root, text="Delete Backups", command=confirm_delete_backups)
+    delete_backups_button.pack()
+
     root.mainloop()
 
 if not os.path.exists("password.txt"):
