@@ -188,7 +188,7 @@ def first_time_prompt():
     author_label = tk.Label(first_time_window, text="Author: SassyCultist  Team: MiMLoader")
     author_label.pack()
 
-    version_label = tk.Label(first_time_window, text="Version 0.1")
+    version_label = tk.Label(first_time_window, text="Version 0.2")
     version_label.pack()
 
     # Warning
@@ -256,7 +256,7 @@ def create_main_window():
 # Create the main window
     root = tk.Tk()
     root.title("Moonstone Manipulator")
-    root.geometry("400x300+300+200")
+    root.geometry("400x350+300+200")
 
     # Mode selection
     mode_var = tk.StringVar(value="encrypt")
