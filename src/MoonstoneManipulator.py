@@ -1,9 +1,11 @@
 import hashlib
+import sys
 import os
 import shutil
 import tkinter as tk
-from tkinter import filedialog
-from tkinter import messagebox
+import tkinter as tk
+from tkinter import filedialog, messagebox, font
+from PIL import Image, ImageTk
 import secrets
 import struct
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
@@ -179,7 +181,19 @@ def encrypt_decrypt(mode, input_file, output_file):
 def first_time_prompt():
     first_time_window = tk.Tk()
     first_time_window.title("Welcome to Moonstone Manipulator")
-    first_time_window.geometry("450x300+200+200")  # Adjust size as needed
+    first_time_window.geometry("550x350+200+200")
+
+    default_font = tk.font.nametofont("TkDefaultFont")
+    default_font.configure(family="Arial", size=10)
+
+    icon_path = os.path.join(asset_folder, "icon.png")
+    icon = Image.open(icon_path)
+    icon = icon.resize((64, 64))
+    icon_photo_image = ImageTk.PhotoImage(icon)
+
+    # Display the image
+    image_label = tk.Label(first_time_window, image=icon_photo_image)
+    image_label.pack()
 
     # Large title
     title_label = tk.Label(first_time_window, text="Moonstone Manipulator", font=("Arial", 16, "bold"), fg="blue")
@@ -253,10 +267,13 @@ def confirm_delete_backups():
             messagebox.showerror("Error", f"Error deleting backups: {e}")
 
 def create_main_window():
-# Create the main window
+    # Create the main window
     root = tk.Tk()
     root.title("Moonstone Manipulator")
     root.geometry("400x350+300+200")
+
+    default_font = tk.font.nametofont("TkDefaultFont")
+    default_font.configure(family="Arial", size=10)
 
     # Mode selection
     mode_var = tk.StringVar(value="encrypt")
@@ -305,6 +322,25 @@ def create_main_window():
 
     root.mainloop()
 
+def get_asset_folder():
+    """
+    Returns the path to the 'Assets' folder, working for both PyInstaller and development environments.
+    
+    Returns:
+        str: The absolute path to the 'Assets' folder.
+    """
+    # Check if running within a PyInstaller bundle
+    if hasattr(sys, '_MEIPASS'):
+        # Use the PyInstaller temporary folder for bundled assets
+        base_path = sys._MEIPASS
+    else:
+        # Use the current directory or script location for development
+        base_path = os.path.dirname(os.path.abspath(__file__))
+    
+    # Return the path to the 'Assets' folder
+    return os.path.join(base_path, "Assets")
+
+asset_folder = get_asset_folder()
 if not os.path.exists("password.txt"):
     first_time_prompt()
 else:

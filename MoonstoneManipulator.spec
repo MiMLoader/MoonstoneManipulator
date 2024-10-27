@@ -1,16 +1,12 @@
 # -*- mode: python ; coding: utf-8 -*-
 
-import os
-
-# Define the path to the main script
-script_path = os.path.join('src', 'MoonstoneManipulator.py')
 
 a = Analysis(
-    [script_path],
+    ['src\\MoonstoneManipulator.py'],
     pathex=[],
     binaries=[],
-    datas=[],
-    hiddenimports=[],
+    datas=[('src\\Assets', 'Assets')],
+    hiddenimports=['PIL._tkinter_finder'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -33,5 +29,11 @@ exe = EXE(
     upx=True,
     upx_exclude=[],
     runtime_tmpdir=None,
-    icon=[os.path.join('src', 'Assets', 'icon.png')],
+    console=False,
+    disable_windowed_traceback=False,
+    argv_emulation=False,
+    target_arch=None,
+    codesign_identity=None,
+    entitlements_file=None,
+    icon=['src\\Assets\\icon.png'],
 )
