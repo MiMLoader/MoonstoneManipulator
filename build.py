@@ -4,37 +4,20 @@ import os
 import sys
 
 if __name__ == "__main__":
-    # Set paths with cross-platform separator
-    icon_path = os.path.join("src", "Assets", "icon.png")
-    script_path = os.path.join("src", "MoonstoneManipulator.py")
-    asset_path = os.path.join("src", "Assets")
+     # Build the command
+    command = ["pyinstaller", "MoonstoneManipulator.spec"]
+
+    # Determine the platform and set the appropriate executable name and argument
+    if sys.platform == "win32":
+        executable_name = "MoonstoneManipulator.exe" 
+    else:
+        executable_name = "MoonstoneManipulator"
 
     # Clean up dist directory if it exists
-    if os.path.exists("dist"):
-        shutil.rmtree("dist")
-
-    # Build the command
-    command = [
-        "pyinstaller",
-        "--noconfirm",
-        "--onefile",
-        "--icon=" + icon_path,
-        "--name=MoonstoneManipulator",
-        "--distpath=dist",
-        "--hidden-import=PIL._tkinter_finder",
-        script_path,
-    ]
-
-    # Add --windowed only on Windows
-    if sys.platform == "win32":
-        command.append("--windowed")
-
-        # Add icon as data using --add-data; syntax varies by OS
-    if sys.platform == "win32":
-        command.append(f"--add-data={asset_path};Assets")
-    else:
-        command.append(f"--add-data={asset_path}:Assets")
-
+    executable_path = os.path.join('dist', executable_name)
+    if os.path.exists(executable_path):
+        os.remove(executable_path)
+   
     print(command)
     subprocess.run(command)
 

@@ -1,11 +1,28 @@
 # -*- mode: python ; coding: utf-8 -*-
 
+import sys
+import os
+
+# Determine the operating system
+is_windows = sys.platform == "win32"
+is_linux = sys.platform == "linux"
+
+# Set the icon path and executable name based on the OS
+icon_path = os.path.join('src', 'Assets', 'icon.png')
+exe_name = 'MoonstoneManipulator.exe' if is_windows else 'MoonstoneManipulator'
+
+# Path for the main script
+script_path = os.path.join('src', 'MoonstoneManipulator.py')
+
+# Use os.path.abspath to ensure the paths are absolute
+script_path = os.path.abspath(script_path)
+icon_path = os.path.abspath(icon_path)
 
 a = Analysis(
-    ['src\\MoonstoneManipulator.py'],
+    [script_path],
     pathex=[],
     binaries=[],
-    datas=[('src\\Assets', 'Assets')],
+    datas=[(os.path.join('src', 'Assets'), 'Assets')],
     hiddenimports=['PIL._tkinter_finder'],
     hookspath=[],
     hooksconfig={},
@@ -29,11 +46,11 @@ exe = EXE(
     upx=True,
     upx_exclude=[],
     runtime_tmpdir=None,
-    console=False,
+    console=not is_windows,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['src\\Assets\\icon.png'],
+    icon=['src/Assets/icon.png'],
 )
