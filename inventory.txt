@@ -1,0 +1,13 @@
+"data\":[
+[[53],[\"beachpeachCrop\"],[\"Stamina:40\"]],
+[[10],[\"stoneFruitCrop\"],[\"Stamina:50\"]],
+[[1],[\"mossballCrop\"],[\"Stamina:20,HP:15,Power:1,Speed:1,Badge:HP\"]],
+[[28],[\"hotairfruitCrop\"],[\"Stamina:20,HP:30,XP:50,Badge:HP\"]],
+[[58],[\"pinwheelflowerCrop\"],[\"Stamina:20,Power:2,Tame:20\"]],
+[[6],[\"stunflowerCrop\"],[\"Stamina:20,Speed:2,Tame:30\"]],
+[[14],[\"hotairfruitCrop\"],[\"Stamina:20,HP:20,XP:50\"]],
+[[2],[\"talismanStudy\"],[\"\"]],
+[[1],[\"talismanMeditate\"],[\"\"]],
+[[2],[\"gemPurple\"],[\"\"]],
+[[52],[\"catTailCrop\"],[\"Stamina:20,Speed:3\"]],
+[[2],[\"ingotIron\"],[\"\"]],
