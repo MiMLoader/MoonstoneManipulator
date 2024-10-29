@@ -15,17 +15,6 @@ from cryptography.hazmat.backends import default_backend
 
 backup_folder = "Backups"
 
-def get_password_key(password):
-    """Converts a password to a raw key suitable for PBKDF2.
-
-    Args:
-        password (str): The password to convert.
-
-    Returns:
-        bytes: The raw key.
-    """
-    return password.encode('utf-8')
-
 def derive_key(password, salt, iterations, key_size):
     """Derives a cryptographic key using PBKDF2.
 
@@ -44,7 +33,7 @@ def derive_key(password, salt, iterations, key_size):
         iterations=iterations,
         length=key_size // 8  # Convert key size from bits to bytes
     )
-    return kdf.derive(get_password_key(password))
+    return kdf.derive(password.encode('utf-8'))
 
 def decrypt_array_buffer(data, password, output_file):
     """Decrypts an array buffer using AES-GCM and saves the output to a file.
