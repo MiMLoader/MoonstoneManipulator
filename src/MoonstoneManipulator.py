@@ -222,10 +222,22 @@ def first_time_prompt():
 
     def save_password():
         password = password_entry.get()
-        check_password(password)
-        with open("password.txt", "a") as passwordFile:
-            passwordFile.write(password)
-            passwordFile.flush()
+
+        try:
+            check_password(password)  # Assuming this raises an exception on invalid passwords
+        except Exception as e:
+            print(f"Password validation error: {e}")
+            return  # Stop further processing if the password is invalid
+
+        try:
+            with open("password.txt", "a") as passwordFile:
+                passwordFile.write(password + "\n")
+                passwordFile.flush()
+        except IOError as e:
+            print(f"File write error: {e}")
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
+        else:
             first_time_window.destroy()
             create_main_window()
 
